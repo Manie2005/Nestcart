@@ -24,3 +24,4 @@ export class Vendor extends Document{
     @Prop({ default: 'vendor' })  // Ensure role is always set to vendor
     role: string;
 }
+export const VendorSchema =SchemaFactory.createForClass(Vendor);
