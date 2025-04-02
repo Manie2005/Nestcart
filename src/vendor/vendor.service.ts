@@ -7,6 +7,7 @@ import { Vendor } from 'src/schema/vendor.schema';
 import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
 import {MailerService} from '@nestjs-modules/mailer';
+import { VerifyOtpDto } from 'src/dto/verify-otp.dto';
 @Injectable()
 export class VendorService {
 constructor(@InjectModel(Vendor.name) private readonly vendorModel: Model<Vendor>,
@@ -79,46 +80,36 @@ return{message:'OtpCode has been sent successfully. Please verify within 10 minu
     throw new InternalServerErrorException('Error creating account. Please try again later.');
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
+//Verify Otp From Vendor
+async verifyOtp(verifyOtpDto:VerifyOtpDto):Promise<any>
+{
+    const {email,otpCode}=verifyOtpDto;
+    //Find vendor by email
+    const vendor= await this.vendorModel.findOne({email});
+    if(!vendor){
+        throw new BadRequestException('Invalid Credential')
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

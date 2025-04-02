@@ -1,4 +1,4 @@
-export class VerifyOtpCode{
+export class VerifyOtpDto{
     email:string
     otpCode:string
 }
