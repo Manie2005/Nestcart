@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
 import {MailerService} from '@nestjs-modules/mailer';
 import { VerifyOtpDto } from 'src/dto/verify-otp.dto';
+import { LoginDto } from 'src/dto/login-vendor.dto';
 @Injectable()
 export class VendorService {
 constructor(@InjectModel(Vendor.name) private readonly vendorModel: Model<Vendor>,
@@ -110,7 +111,38 @@ catch(error){
 }
 }
 //Vendor Login Method
+async login (loginDto:LoginDto):Promise<any>{
+    const {email,password}=loginDto;
 
+    const vendor= await this.vendorModel.findOne({email});
+    if(!vendor){
+throw new BadRequestException('Invalid Credentials') 
+    }
+    const passwordMatches= await bcrypt.compare(password, vendor.password);
+    if(!passwordMatches){
+        throw new BadRequestException('Invalid Credentials')
+    }
+//Generate and Return JwtToken
+const token = this.jwtService.sign({vendorid: vendor._id});
+return{accessToken:token};
+}
+async forgotPassword(email:string):Promise<void>{
+const vendor= await this.vendorModel.findOne({email})
+if(!email){
+    throw new BadRequestException('Email cannot be found')
+}
+//Generate a resetToken
+const resetToken= this.jwtService.sign(
+    {vendorid:vendor._id  },
+    {expiresIn: '1h'},
+);
+
+
+
+
+
+
+}
 
 
 
