@@ -90,8 +90,26 @@ async verifyOtp(verifyOtpDto:VerifyOtpDto):Promise<any>
     if(!vendor){
         throw new BadRequestException('Invalid Credential')
     }
-}
 
+//Ensure OtpCode is valid and is not expired and save
+if(vendor.otpCode!= otpCode.toString()){
+throw new BadRequestException('Invalid Otp')
+}
+if(new Date(vendor.otpExpires).getTime() < Date.now()){
+throw new BadRequestException('Expired Otp')
+}
+vendor.otpCode=undefined;
+vendor.otpExpires=undefined;
+vendor.isVerified=true;
+try{
+    await vendor.save();
+    return{message:'Your sccount has been verified successfully'};
+}
+catch(error){
+    console.error(`Error saving the user: ${error.message}`);
+}
+}
+//Vendor Login Method
 
 
 

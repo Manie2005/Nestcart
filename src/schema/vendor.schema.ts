@@ -23,5 +23,9 @@ export class Vendor extends Document{
     updatedAt:boolean
     @Prop({ default: 'vendor' })  // Ensure role is always set to vendor
     role: string;
+    @Prop()
+    otpCode:String
+    @Prop()
+    otpExpires:Date
 }
 export const VendorSchema =SchemaFactory.createForClass(Vendor);
