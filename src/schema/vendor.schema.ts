@@ -10,7 +10,7 @@ export class Vendor extends Document{
     @Prop({required:true})
     lastname:string
     @Prop({required:true})
-    phonenumber:string
+    phonenumber:number
     @Prop({required:true})
     password:string
     @Prop()
