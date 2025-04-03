@@ -136,6 +136,7 @@ const resetToken= this.jwtService.sign(
     {vendorid:vendor._id  },
     {expiresIn: '1h'},
 );
+vendor.resetPasswordToken=resetToken;
 
 
 
