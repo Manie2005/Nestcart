@@ -27,5 +27,9 @@ export class Vendor extends Document{
     otpCode:String
     @Prop()
     otpExpires:Date
+    @Prop()
+    resetPasswordToken:string;
+    @Prop()
+    resetTokenExpires:Date;
 }
 export const VendorSchema =SchemaFactory.createForClass(Vendor);
