@@ -9,6 +9,7 @@ import * as nodemailer from 'nodemailer';
 import {MailerService} from '@nestjs-modules/mailer';
 import { VerifyOtpDto } from 'src/dto/verify-otp.dto';
 import { LoginDto } from 'src/dto/login-vendor.dto';
+import { userInfo } from 'os';
 @Injectable()
 export class VendorService {
 constructor(@InjectModel(Vendor.name) private readonly vendorModel: Model<Vendor>,
@@ -163,10 +164,21 @@ async resetPassword(token:string, newPassword:string):Promise<void>{
             _id:decoded.userId,
             resetPasswordToken:token,
             resetTokenExpires:{$gt: new Date()}
-        })
-    }
+        });
+        if(!vendor){
+            throw new BadRequestException('Invalid or Expired Token')
+        }
     
-    catch(error){}
+    const hashedPassword =await bcrypt.hash(newPassword,12); 
+    vendor.password=hashedPassword;
+    vendor.resetPasswordToken=undefined;
+vendor.resetTokenExpires=undefined;
+await vendor.save();
+console.log('Password successfully reset');
+
+ } catch(error){
+    throw new BadRequestException('Invalid or Expired Token')
+ }
 }
 
 
