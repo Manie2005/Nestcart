@@ -139,11 +139,21 @@ const resetToken= this.jwtService.sign(
 
 vendor.resetPasswordToken=resetToken;
 vendor.resetTokenExpires = new Date(Date.now()+ 3600000);//An Hour
-await vendor.save()
+await vendor.save();
 
-
-
-
+const resetLink = `http://example.com/reset-password?token=${resetToken}`;
+try{
+    await this.sendEmail(
+        email,
+        'Reset Password Link:',
+        `Hello! You have requested a password reset. Use the link provided below: ${resetLink}`,
+    );
+    console.log('Reset Password Link successfully sent');
+}
+catch(error){
+    console.log(`Failed To send ResetPassword Link : ${error.message}`);
+throw new InternalServerErrorException('Failed to send Reset Password Email');
+}
 
 }
 

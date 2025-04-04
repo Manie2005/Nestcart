@@ -18,6 +18,8 @@ export class Vendor extends Document{
     @Prop()
     isActive:boolean
     @Prop()
+    email:String
+    @Prop()
     createdAt:Date
     @Prop({required:true})
     updatedAt:boolean
