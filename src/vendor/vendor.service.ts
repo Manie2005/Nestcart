@@ -154,9 +154,20 @@ catch(error){
     console.log(`Failed To send ResetPassword Link : ${error.message}`);
 throw new InternalServerErrorException('Failed to send Reset Password Email');
 }
-
 }
-
+//Reset Password Functionality
+async resetPassword(token:string, newPassword:string):Promise<void>{
+    try{
+        const decoded =this.jwtService.verify(token);
+        const vendor = await this.vendorModel.findOne({
+            _id:decoded.userId,
+            resetPasswordToken:token,
+            resetTokenExpires:{$gt: new Date()}
+        })
+    }
+    
+    catch(error){}
+}
 
 
 
