@@ -39,5 +39,10 @@ async forgotPassword(@Body() forgotPasswordDto:ForgotPasswordDto){
     await this.vendorService.forgotPassword(forgotPasswordDto.email);
 }
 @Post('reset-password')
-async resetPassword(@Body() resetPasswordDto:ResetPasswordDto){}
+async resetPassword(@Body() resetPasswordDto:ResetPasswordDto){
+    await this.vendorService.resetPassword(
+        resetPasswordDto.Token,
+        resetPasswordDto.newPassword
+    )
+}
 }
