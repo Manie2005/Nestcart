@@ -1,9 +1,9 @@
 import { Prop, SchemaFactory,Schema } from "@nestjs/mongoose";
 import { UUID } from "mongodb";
 import {Document} from "mongoose";
-@Schema()
+@Schema({timestamps:true})
 export class Vendor extends Document{
-    @Prop({required:true,unique:true})//Give each vendor their unique id
+    @Prop({unique:true})//Give each vendor their unique id
     id:UUID
     @Prop({required:true})
     firstname:string
@@ -21,7 +21,7 @@ export class Vendor extends Document{
     email:String
     @Prop()
     createdAt:Date
-    @Prop({required:true})
+    @Prop()
     updatedAt:boolean
     @Prop({ default: 'vendor',unique:true })  // Ensure role is always set to vendor
     role: string;
