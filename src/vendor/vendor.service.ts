@@ -66,9 +66,7 @@ const otpExpires = new Date(Date.now()+ 10 * 60 * 1000); //Expires In 10 Minutes
 const saltRounds = parseInt(process.env.SALT_ROUNDS, 10) || 12;
 const hashedPassword= await bcrypt.hash(password,saltRounds);
 
-  
-
-//Create new Vendor Document
+  //Create new Vendor Document
 const newVendor=new this.vendorModel({
     firstname,lastname,phonenumber,password:hashedPassword,email,address,otpCode,otpExpires
 });
@@ -82,8 +80,6 @@ await this.sendEmail(
 );
 return{message:'OtpCode has been sent successfully. Please verify within 10 minutes'};
 }catch(error){
-    console.error('Signup Error:', error); // 👈 Add this
-
     throw new InternalServerErrorException('Error creating account. Please try again later.');
 
 }

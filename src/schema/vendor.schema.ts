@@ -3,12 +3,15 @@ import { UUID } from "mongodb";
 import {Document} from "mongoose";
 @Schema({timestamps:true})
 export class Vendor extends Document{
-    @Prop({unique:true})//Give each vendor their unique id
+    @Prop({unique:true})
     id:UUID
+
     @Prop({required:true})
     firstname:string
+
     @Prop({required:true})
     lastname:string
+    
     @Prop({required:true})
     phonenumber:number
     @Prop({required:true})
