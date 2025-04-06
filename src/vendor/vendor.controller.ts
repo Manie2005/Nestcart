@@ -3,6 +3,8 @@ import { VendorService } from './vendor.service';
 import { CreateVendorDto } from 'src/dto/create-vendor.dto';
 import { LoginDto } from 'src/dto/login-vendor.dto';
 import { VerifyOtpDto } from 'src/dto/verify-otp.dto';
+import { ForgotPasswordDto } from 'src/dto/forgot-password.dto';
+import { ResetPasswordDto } from 'src/dto/reset-password.dto';
 
 @Controller('vendor')
 export class VendorController {
@@ -29,9 +31,13 @@ if(isVerified){
         throw new BadRequestException('Invalid OTP');
     }
 }catch(error){
-
+return{
+    message:'User not verified',error:error.message}
+}}
+@Post('forgot-password')
+async forgotPassword(@Body() forgotPasswordDto:ForgotPasswordDto){
+    await this.vendorService.forgotPassword(forgotPasswordDto.email);
 }
-
-}
-
+@Post('reset-password')
+async resetPassword(@Body() resetPasswordDto:ResetPasswordDto){}
 }
