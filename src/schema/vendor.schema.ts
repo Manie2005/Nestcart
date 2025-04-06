@@ -23,7 +23,7 @@ export class Vendor extends Document{
     createdAt:Date
     @Prop({required:true})
     updatedAt:boolean
-    @Prop({ default: 'vendor' })  // Ensure role is always set to vendor
+    @Prop({ default: 'vendor',unique:true })  // Ensure role is always set to vendor
     role: string;
     @Prop()
     otpCode:String
