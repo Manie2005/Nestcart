@@ -1,10 +1,9 @@
 import { Prop, SchemaFactory,Schema } from "@nestjs/mongoose";
-import { UUID } from "mongodb";
 import {Document} from "mongoose";
 @Schema({timestamps:true})
-export class Vendor extends Document{
+export class Auth{
     @Prop({unique:true})
-    id:UUID
+    id:string
 
     @Prop({required:true})
     firstname:string
@@ -21,15 +20,15 @@ export class Vendor extends Document{
     @Prop()
     isActive:boolean
     @Prop()
-    email:String
+    email:string
     @Prop()
     createdAt:Date
     @Prop()
-    updatedAt:boolean
+    updatedAt:Date
     @Prop({ default: 'vendor',unique:true })  // Ensure role is always set to vendor
     role: string;
     @Prop()
-    otpCode:String
+    otpCode:string
     @Prop()
     otpExpires:Date
     @Prop()
@@ -37,4 +36,4 @@ export class Vendor extends Document{
     @Prop()
     resetTokenExpires:Date;
 }
-export const VendorSchema =SchemaFactory.createForClass(Vendor);
+export const AuthSchema =SchemaFactory.createForClass(Auth);
