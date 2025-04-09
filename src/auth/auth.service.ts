@@ -180,6 +180,8 @@ console.log('Password successfully reset');
  } catch(error){
     throw new BadRequestException('Invalid or Expired Token')
  }
+ //Logout Method
+ 
 }
 
 

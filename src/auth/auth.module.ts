@@ -5,11 +5,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Auth, AuthSchema } from 'src/schema/auth.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { MailerModule, MailerService } from '@nestjs-modules/mailer';
+import { jwtConstants } from './constants';
 @Module({
   imports:[MongooseModule.forFeature([{name:'Auth',schema:AuthSchema}]),
   JwtModule.register({
-    secret:process.env.JWT_SECRET_KEY ||'candace',
-    signOptions:{expiresIn:'1h'},
+    secret:jwtConstants.secret||'candace', 
+    signOptions:{expiresIn:'120s'},
   }),
   MailerModule.forRoot({
     transport:{
