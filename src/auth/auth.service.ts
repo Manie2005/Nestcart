@@ -2,13 +2,13 @@ import { BadRequestException, Injectable, InternalServerErrorException} from '@n
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateVendorDto } from 'src/dto/create-vendor.dto';
+import { CreateUserDto } from 'src/dto/create-user.dto';
 import { AuthSchema,Auth } from 'src/schema/auth.schema';
 import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
 import {MailerService} from '@nestjs-modules/mailer';
 import { VerifyOtpDto } from 'src/dto/verify-otp.dto';
-import { LoginDto } from 'src/dto/login-vendor.dto';
+import { LoginDto } from 'src/dto/login-user.dto';
 import { userInfo } from 'os';
 @Injectable()
 export class AuthService {
@@ -46,33 +46,33 @@ try {
     throw new Error('Failed to send email. Please try again later.');
   }
 }
-//Vendor Signup Method
+//User Signup Method
 
-async signup(createVendorDto:CreateVendorDto):Promise<any>
+async signup(createUserDto:CreateUserDto):Promise<any>
 {
-    const {firstname,lastname,phonenumber,password,email,address}=createVendorDto;
+    const {firstname,lastname,phonenumber,password,email,address}=createUserDto;
     if(!password){
         throw new BadRequestException('Password field is required')
     }
-//Confirm if the vendor is not an existing user
-const existingVendor= await this.authModel.findOne({email});
-if(existingVendor){
-    throw new BadRequestException('Vendor already exists')
+//Confirm if the user is not an existing user
+const existingUser= await this.authModel.findOne({email});
+if(existingUser){
+    throw new BadRequestException('User already exists')
 }
-//Generate an OTP and give it expiration time to validate vendor
+//Generate an OTP and give it expiration time to validate userr
 const otpCode= this.generateOtp();
 const otpExpires = new Date(Date.now()+ 10 * 60 * 1000); //Expires In 10 Minutes
-//Hash Vendor Password
+//Hash Userr Password
 const saltRounds = parseInt(process.env.SALT_ROUNDS, 10) || 12;
 const hashedPassword= await bcrypt.hash(password,saltRounds);
 
-  //Create new Vendor Document
-const newVendor=new this.authModel({
+  //Create new Userr Document
+const newUser=new this.authModel({
     firstname,lastname,phonenumber,password:hashedPassword,email,address,otpCode,otpExpires
 });
-//Save the vendor and send OTP 
+//Save the user and send OTP 
 try{
-await newVendor.save()
+await newUser.save()
 await this.sendEmail(
     email,
     `NestCart OTP Code`,
@@ -84,64 +84,64 @@ return{message:'OtpCode has been sent successfully. Please verify within 10 minu
 
 }
 }
-//Verify Otp From Vendor
+//Verify Otp From User
 async verifyOtp(verifyOtpDto:VerifyOtpDto):Promise<any>
 {
     const {email,otpCode}=verifyOtpDto;
-    //Find vendor by email
-    const vendor= await this.authModel.findOne({email});
-    if(!vendor){
+    //Find user by email
+    const user= await this.authModel.findOne({email});
+    if(!user){
         throw new BadRequestException('Invalid Credential')
     }
 
 //Ensure OtpCode is valid and is not expired and save
-if(vendor.otpCode!= otpCode.toString()){
+if(user.otpCode!= otpCode.toString()){
 throw new BadRequestException('Invalid Otp')
 }
-if(new Date(vendor.otpExpires).getTime() < Date.now()){
+if(new Date(user.otpExpires).getTime() < Date.now()){
 throw new BadRequestException('Expired Otp')
 }
-vendor.otpCode=undefined;
-vendor.otpExpires=undefined;
-vendor.isVerified=true;
+user.otpCode=undefined;
+user.otpExpires=undefined;
+user.isVerified=true;
 try{
-    await vendor.save();
+    await user.save();
     return{message:'Your sccount has been verified successfully'};
 }
 catch(error){
     console.error(`Error saving the user: ${error.message}`);
 }
 }
-//Vendor Login Method
-async login (loginDto:LoginDto):Promise<any>{
+//User Login Method
+async login (loginDto:LoginDto):Promise<{access_token:string}>{
     const {email,password}=loginDto;
 
-    const vendor= await this.authModel.findOne({email});
-    if(!vendor){
+    const user= await this.authModel.findOne({email});
+    if(!user){
 throw new BadRequestException('Invalid Credentials') 
     }
-    const passwordMatches= await bcrypt.compare(password, vendor.password);
+    const passwordMatches= await bcrypt.compare(password, user.password);
     if(!passwordMatches){
         throw new BadRequestException('Invalid Credentials')
     }
 //Generate and Return JwtToken
-const token = this.jwtService.sign({vendorid: vendor._id});
-return{accessToken:token};
+const token = this.jwtService.sign({userid: user._id});
+return{access_token:await this.jwtService.signAsync(token)};
 }
 async forgotPassword(email:string):Promise<void>{
-const vendor= await this.authModel.findOne({email})
+const user= await this.authModel.findOne({email})
 if(!email){
     throw new BadRequestException('Email cannot be found')
 }
 //Generate a resetToken
 const resetToken= this.jwtService.sign(
-    {vendorid:vendor._id  },
+    {userid:user._id  },
     {expiresIn: '1h'},
 );
 
-vendor.resetPasswordToken=resetToken;
-vendor.resetTokenExpires = new Date(Date.now()+ 3600000);//An Hour
-await vendor.save();
+user.resetPasswordToken=resetToken;
+user.resetTokenExpires = new Date(Date.now()+ 3600000);//An Hour
+await user.save();
 
 const resetLink = `http://example.com/reset-password?token=${resetToken}`;
 try{
@@ -161,27 +161,27 @@ throw new InternalServerErrorException('Failed to send Reset Password Email');
 async resetPassword(token:string, newPassword:string):Promise<void>{
     try{
         const decoded =this.jwtService.verify(token);
-        const vendor = await this.authModel.findOne({
+        const user = await this.authModel.findOne({
             _id:decoded.userId,
             resetPasswordToken:token,
             resetTokenExpires:{$gt: new Date()}
         });
-        if(!vendor){
+        if(!user){
             throw new BadRequestException('Invalid or Expired Token')
         }
     
     const hashedPassword =await bcrypt.hash(newPassword,12); 
-    vendor.password=hashedPassword;
-    vendor.resetPasswordToken=undefined;
-vendor.resetTokenExpires=undefined;
-await vendor.save();
+    user.password=hashedPassword;
+    user.resetPasswordToken=undefined;
+user.resetTokenExpires=undefined;
+await user.save();
 console.log('Password successfully reset');
 
  } catch(error){
     throw new BadRequestException('Invalid or Expired Token')
  }
  //Logout Method
- 
+
 }
 
 

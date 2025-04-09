@@ -1,18 +1,19 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post,Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateVendorDto } from 'src/dto/create-vendor.dto';
-import { LoginDto } from 'src/dto/login-vendor.dto';
+import { CreateUserDto } from 'src/dto/create-user.dto';
+import { LoginDto } from 'src/dto/login-user.dto';
 import { VerifyOtpDto } from 'src/dto/verify-otp.dto';
 import { ForgotPasswordDto } from 'src/dto/forgot-password.dto';
 import { ResetPasswordDto } from 'src/dto/reset-password.dto';
+import { AuthGuard } from './auth.guard';
 
-@Controller('vendor')
+@Controller('auth')
 export class AuthController {
-    constructor (private  readonly authService:AuthService){}
+    constructor (private readonly authService:AuthService){}
 
 @Post('signup')
-async signup(@Body() createVendorDto:CreateVendorDto){
-    return this.authService.signup(createVendorDto);
+async signup(@Body() createUserDto:CreateUserDto){
+    return this.authService.signup(createUserDto);
 }
 @Post('login')
 async login(@Body() loginDto:LoginDto){
@@ -44,5 +45,11 @@ async resetPassword(@Body() resetPasswordDto:ResetPasswordDto){
         resetPasswordDto.Token,
         resetPasswordDto.newPassword
     )
+}
+
+@UseGuards(AuthGuard)
+@Get('profile')
+getProfile(@Request() req){
+    return req.user
 }
 }
