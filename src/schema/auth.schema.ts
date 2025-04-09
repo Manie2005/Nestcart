@@ -1,9 +1,7 @@
 import { Prop, SchemaFactory,Schema } from "@nestjs/mongoose";
-import {Document} from "mongoose";
 @Schema({timestamps:true})
 export class Auth{
-    @Prop({unique:true})
-    id:string
+    
 
     @Prop({required:true})
     firstname:string
@@ -19,13 +17,13 @@ export class Auth{
     isVerified:boolean
     @Prop()
     isActive:boolean
-    @Prop()
+    @Prop({unique:true})
     email:string
     @Prop()
     createdAt:Date
     @Prop()
     updatedAt:Date
-    @Prop({ default: 'vendor',unique:true })  // Ensure role is always set to vendor
+    @Prop({ default: 'vendor'})  // Ensure role is always set to vendor
     role: string;
     @Prop()
     otpCode:string

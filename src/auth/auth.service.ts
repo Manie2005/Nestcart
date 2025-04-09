@@ -66,7 +66,7 @@ const otpExpires = new Date(Date.now()+ 10 * 60 * 1000); //Expires In 10 Minutes
 const saltRounds = parseInt(process.env.SALT_ROUNDS, 10) || 12;
 const hashedPassword= await bcrypt.hash(password,saltRounds);
 
-  //Create new Userr Document
+  //Create new User Document
 const newUser=new this.authModel({
     firstname,lastname,phonenumber,password:hashedPassword,email,address,otpCode,otpExpires
 });
@@ -80,7 +80,8 @@ await this.sendEmail(
 );
 return{message:'OtpCode has been sent successfully. Please verify within 10 minutes'};
 }catch(error){
-    throw new InternalServerErrorException('Error creating account. Please try again later.');
+    console.log(`Error saving :${error.message}`)
+    throw new InternalServerErrorException('Error creating accounts. Please try again later.');
 
 }
 }
@@ -125,17 +126,18 @@ throw new BadRequestException('Invalid Credentials')
         throw new BadRequestException('Invalid Credentials')
     }
 //Generate and Return JwtToken
-const token = this.jwtService.sign({userid: user._id});
-return{access_token:await this.jwtService.signAsync(token)};
+const access_token = await this.jwtService.signAsync({ userid: user._id });
+return { access_token };
+
 }
 async forgotPassword(email:string):Promise<void>{
 const user= await this.authModel.findOne({email})
-if(!email){
+if(!user){
     throw new BadRequestException('Email cannot be found')
 }
 //Generate a resetToken
 const resetToken= this.jwtService.sign(
-    {userid:user._id  },
+    {userId:user._id  },
     {expiresIn: '1h'},
 );
 
