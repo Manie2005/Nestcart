@@ -22,7 +22,7 @@ export class Auth{
     @Prop()
     createdAt:Date
     @Prop()
-    updatedAt:Date
+        updatedAt:Date
     @Prop({ default: 'vendor'})  // Ensure role is always set to vendor
     role: string;
     @Prop()
