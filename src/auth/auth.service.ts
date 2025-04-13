@@ -50,7 +50,7 @@ try {
 
 async signup(createUserDto:CreateUserDto):Promise<any>
 {
-    const {firstname,lastname,phonenumber,password,email,address}=createUserDto;
+    const {firstname,lastname,phonenumber,password,email,address,role ='vendor'}=createUserDto;
     if(!password){
         throw new BadRequestException('Password field is required')
     }
@@ -68,17 +68,17 @@ const hashedPassword= await bcrypt.hash(password,saltRounds);
 
   //Create new User Document
 const newUser=new this.authModel({
-    firstname,lastname,phonenumber,password:hashedPassword,email,address,otpCode,otpExpires
+    firstname,lastname,phonenumber,password:hashedPassword,email,address,role,otpCode,otpExpires
 });
 //Save the user and send OTP 
 try{
-await newUser.save()
+await newUser.save( )
 await this.sendEmail(
     email,
     `NestCart OTP Code`,
     `Hello ${firstname}, your NestCart Code is: ${otpCode}.Please note that this otp is valid for only 10 minutes`,
 );
-return{message:'OtpCode has been sent successfully. Please verify within 10 minutes'};
+return{message:`OtpCode has been sent successfully. Please verify within 10 minutes. Account created as ${role}`};
 }catch(error){
     console.log(`Error saving :${error.message}`)
     throw new InternalServerErrorException('Error creating accounts. Please try again later.');
