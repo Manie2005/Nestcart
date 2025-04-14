@@ -12,6 +12,9 @@ import { LoginDto } from 'src/dto/login-user.dto';
 import { userInfo } from 'os';
 @Injectable()
 export class AuthService {
+saveFileInfo(userId: string, file: Express.Multer.File) {
+  throw new Error('Method not implemented.');
+}
 constructor(@InjectModel(Auth.name) private authModel: Model<Auth>,
 private readonly jwtService:JwtService, 
 private readonly mailerService:MailerService
