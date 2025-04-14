@@ -66,16 +66,18 @@ getProfile(@Request() req){
         cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
       },
     }),
+    fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
     limits: {
       fileSize: 5 * 1024 * 1024, // 5MB max
     },
   }),
 )
-uploadFile(@UploadedFile() file: Express.Multer.File) {
-  return {
-    message: 'File uploaded successfully',
-    filename: file.filename,
-    path: file.path,
-  };
-}
+async uploadProfile(@UploadedFile() file: Express.Multer.File, @Body('userId') userId: string) {
+    return this.authService.saveFileInfo(userId, file);
+  }
 }

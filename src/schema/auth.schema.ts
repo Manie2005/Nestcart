@@ -30,5 +30,10 @@ export class Auth{
     resetPasswordToken:string;
     @Prop()
     resetTokenExpires?:Date;
+    @Prop()
+profileImageUrl: string;
+
+@Prop()
+profileImageName: string;
 }
 export const AuthSchema =SchemaFactory.createForClass(Auth);
