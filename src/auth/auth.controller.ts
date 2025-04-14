@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Post,Request, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post,Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { LoginDto } from 'src/dto/login-user.dto';
@@ -6,6 +6,9 @@ import { VerifyOtpDto } from 'src/dto/verify-otp.dto';
 import { ForgotPasswordDto } from 'src/dto/forgot-password.dto';
 import { ResetPasswordDto } from 'src/dto/reset-password.dto';
 import { AuthGuard } from './auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('auth')
 export class AuthController {
@@ -51,5 +54,28 @@ async resetPassword(@Body() resetPasswordDto:ResetPasswordDto){
 @Get('profile')
 getProfile(@Request() req){
     return req.user
+}
+@Post()
+@UseInterceptors(
+  FileInterceptor('file', {
+    storage: diskStorage({
+      destination: './uploads', // Folder to store files
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = extname(file.originalname);
+        cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+      },
+    }),
+    limits: {
+      fileSize: 5 * 1024 * 1024, // 5MB max
+    },
+  }),
+)
+uploadFile(@UploadedFile() file: Express.Multer.File) {
+  return {
+    message: 'File uploaded successfully',
+    filename: file.filename,
+    path: file.path,
+  };
 }
 }
