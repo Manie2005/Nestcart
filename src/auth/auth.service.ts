@@ -3,19 +3,18 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from 'src/dto/create-user.dto';
-import { AuthSchema,Auth } from 'src/schema/auth.schema';
+import {Auth } from 'src/schema/auth.schema';
 import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
 import {MailerService} from '@nestjs-modules/mailer';
 import { VerifyOtpDto } from 'src/dto/verify-otp.dto';
 import { LoginDto } from 'src/dto/login-user.dto';
-import { userInfo } from 'os';
+import { Upload, UploadDocument } from 'src/schema/upload.schema';
 @Injectable()
 export class AuthService {
-saveFileInfo(userId: string, file: Express.Multer.File) {
-  throw new Error('Method not implemented.');
-}
 constructor(@InjectModel(Auth.name) private authModel: Model<Auth>,
+@InjectModel(Upload.name) private uploadModel: Model<UploadDocument>,
+
 private readonly jwtService:JwtService, 
 private readonly mailerService:MailerService
 ){}
@@ -162,6 +161,17 @@ catch(error){
 throw new InternalServerErrorException('Failed to send Reset Password Email');
 }
 }
+async saveFileInfo(file: Express.Multer.File): Promise<Upload> {
+    const createdFile = new this.uploadModel({
+      originalName: file.originalname,
+      filename: file.filename,
+      mimetype: file.mimetype,
+      size: file.size,
+      path: file.path,
+    });
+    return createdFile.save();
+    //Save Fileinfo into the database.
+  }
 //Reset Password Functionality
 async resetPassword(token:string, newPassword:string):Promise<void>{
     try{
@@ -185,7 +195,7 @@ console.log('Password successfully reset');
  } catch(error){
     throw new BadRequestException('Invalid or Expired Token')
  }
- //Logout Method
+ 
 
 }
 
