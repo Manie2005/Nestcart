@@ -80,4 +80,12 @@ getProfile(@Request() req){
 async uploadProfile(@UploadedFile() file: Express.Multer.File, @Body('userId') userId: string) {
     return this.authService.saveFileInfo(userId, file);
   }
+
+@UseGuards(AuthGuard)//Allow only logged in users access this route
+@Post('logout')
+async logout(@Request() req) {
+  const userId = req.user._id || req.user.id;
+  return this.authService.logout(userId);
+}
+
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException} from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -132,6 +132,25 @@ const access_token = await this.jwtService.signAsync({ userid: user._id });
 return { access_token };
 
 }
+//Logout Method
+ 
+async logout(userId: string) {
+    const user = await this.authModel.findById(userId);
+  
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+  
+    // Clear the reset token fields
+    user.resetPasswordToken = undefined;
+    user.resetTokenExpires = undefined;
+  
+    await user.save();
+  
+    return {
+      message: 'Logout successful. Reset token cleared.',
+    };
+  }
 async forgotPassword(email:string):Promise<void>{
 const user= await this.authModel.findOne({email})
 if(!user){
@@ -161,7 +180,7 @@ catch(error){
 throw new InternalServerErrorException('Failed to send Reset Password Email');
 }
 }
-async saveFileInfo(file: Express.Multer.File): Promise<Upload> {
+async saveFileInfo(userId:string,file: Express.Multer.File): Promise<Upload> {
     const createdFile = new this.uploadModel({
       originalName: file.originalname,
       filename: file.filename,
@@ -196,6 +215,7 @@ console.log('Password successfully reset');
     throw new BadRequestException('Invalid or Expired Token')
  }
  
+  
 
 }
 
