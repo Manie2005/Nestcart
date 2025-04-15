@@ -6,8 +6,10 @@ import { Auth, AuthSchema } from 'src/schema/auth.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { MailerModule, MailerService } from '@nestjs-modules/mailer';
 import { jwtConstants } from './constants';
+import { UploadModule } from 'src/upload/upload.module';
 @Module({
   imports:[MongooseModule.forFeature([{name:'Auth',schema:AuthSchema}]),
+  UploadModule,
   JwtModule.register({
     secret:jwtConstants.secret||'candace', 
     signOptions:{expiresIn:'120s'},
