@@ -11,7 +11,7 @@ import { UploadModule } from 'src/upload/upload.module';
   imports:[MongooseModule.forFeature([{name:'Auth',schema:AuthSchema}]),
   UploadModule,
   JwtModule.register({
-    secret:jwtConstants.secret||'candace',// 
+    secret:jwtConstants.secret||'candace', 
     signOptions:{expiresIn:'120s'},
   }),
   MailerModule.forRoot({
