@@ -2,7 +2,7 @@ import { Prop, SchemaFactory,Schema } from "@nestjs/mongoose";
 @Schema({timestamps:true})
 export class Auth{
     @Prop({required: false, unique: false })
-    customId: string
+    _id?: string
 
     @Prop({required:true})
     firstname:string
@@ -35,5 +35,11 @@ profileImageUrl: string;
 
 @Prop()
 profileImageName: string;
+
+@Prop({nullable:true})
+twoFactorSecret?:string;
+
+@Prop({default:false})//heroshe,shareshopshipstore,flymymall
+isTwoFactorEnabled?:boolean;
 }
 export const AuthSchema =SchemaFactory.createForClass(Auth);
