@@ -4,7 +4,7 @@ import { AuthController } from './auth.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Auth, AuthSchema } from 'src/schema/auth.schema';
 import { JwtModule } from '@nestjs/jwt';
-import { MailerModule, MailerService } from '@nestjs-modules/mailer';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { jwtConstants } from './constants';
 import { UploadModule } from 'src/upload/upload.module';
 import { TwoFAService } from 'src/two-fa/two-fa.service';
@@ -15,17 +15,9 @@ import { TwoFAService } from 'src/two-fa/two-fa.service';
     secret:jwtConstants.secret||'candace', 
     signOptions:{expiresIn:'120s'},
   }),
-  MailerModule.forRoot({
-    transport:{
-      service:'smtp.gmail.com',
-      auth:{
-        user:process.env.EMAIL_USER,
-        pass:process.env.EMAIL_PASS
-      }
-    }
-  })
+  MailerModule,    
 ],
-  providers: [AuthService,Auth,TwoFAService, MailerService],
+  providers: [AuthService,Auth,TwoFAService],
   controllers: [AuthController],
   exports:[AuthService]
 })
