@@ -96,7 +96,8 @@ import {
         return { message: `OtpCode has been sent successfully. Account created as ${role}` };
       } catch (error) {
         throw new InternalServerErrorException('Error creating account. Try again later.');
-      }//
+      }
+      //
     }
   
     async verifyOtp(verifyOtpDto: VerifyOtpDto): Promise<any> {
