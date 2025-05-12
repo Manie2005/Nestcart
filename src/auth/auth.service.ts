@@ -43,6 +43,7 @@ import {
         host: 'smtp.gmail.com',
         port: 465,
       });
+      
   
       if (!email || !subject || !text) {
         throw new BadRequestException('Email, Subject or Text field is missing');
@@ -56,8 +57,10 @@ import {
           text,
         });
       } catch (error) {
-        throw new Error('Failed to send email. Please try again later.');
-      }
+  console.error('Email send failed:', error);
+  throw new InternalServerErrorException('Failed to send email.');
+}
+
     }
   
     async signup(createUserDto: CreateUserDto): Promise<any> {
@@ -95,6 +98,7 @@ import {
         );
         return { message: `OtpCode has been sent successfully. Account created as ${role}` };
       } catch (error) {
+        console.error('Error while creating user:', error);
         throw new InternalServerErrorException('Error creating account. Try again later.');
       }
       //
