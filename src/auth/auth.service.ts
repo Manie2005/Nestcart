@@ -100,6 +100,7 @@ import {
     }
   
     async verifyOtp(verifyOtpDto: VerifyOtpDto): Promise<any> {
+      //
       const { email, otpCode } = verifyOtpDto;
       const user = await this.authModel.findOne({ email });
   
