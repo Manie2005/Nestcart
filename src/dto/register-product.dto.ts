@@ -6,10 +6,7 @@ export class RegisterProductDto{
 
     @IsString()
     description:string;
-
-    @IsString()
-    category:string;
-
+    
     @IsString()
     price:string;
 

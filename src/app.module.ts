@@ -13,6 +13,7 @@ import { TwoFAService } from './two-fa/two-fa.service';
 import { TwoFAController } from './two-fa/two-fa.controller';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { JwtModule } from '@nestjs/jwt';
+import { CategoryModule } from './category/category.module';
 @Module({
   imports: [ConfigModule.forRoot(), //Load my env file
    ScheduleModule.forRoot(),
@@ -30,7 +31,7 @@ transport:{
        signOptions:{expiresIn:'120s'},
      }),
     MongooseModule.forRoot(process.env.MONGO_URI) //GET MONGO_URI Value
-      ,AuthModule, CustomerModule, VendorModule, UploadModule],
+      ,AuthModule, CustomerModule, VendorModule, UploadModule, CategoryModule],
   controllers: [AppController, TwoFAController],
   providers: [AppService, TwoFAService],
 })

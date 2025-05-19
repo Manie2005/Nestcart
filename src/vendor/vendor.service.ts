@@ -13,7 +13,7 @@ export class VendorService {
     ){}
     //Register Vendor Product
 async register(registerProductsDto:RegisterProductDto):Promise<any>{
-    const {title, description,category,price,quantity,imageUrl}=registerProductsDto;
+    const {title, description,price,quantity,imageUrl}=registerProductsDto;
 if(!title) throw new BadRequestException(`Product title is required`);
 const existingProduct = await this.vendorModel.findOne({title});
 if (existingProduct) throw new BadRequestException(`Product with this title already exists`);
@@ -21,7 +21,6 @@ if (existingProduct) throw new BadRequestException(`Product with this title alre
 const newProduct=new this.vendorModel({
 title,
 description,
-category,
 price,
 quantity,  
 imageUrl
@@ -33,7 +32,7 @@ try{
    throw new InternalServerErrorException('Error registering Product');
 }
 }
- //Register Category 
+ 
  
 
 
