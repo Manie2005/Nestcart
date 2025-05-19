@@ -101,7 +101,7 @@ import {
         console.error('Error while creating user:', error);
         throw new InternalServerErrorException('Error creating account. Try again later.');
       }
-      //
+      
     }
   
     async verifyOtp(verifyOtpDto: VerifyOtpDto): Promise<any> {
