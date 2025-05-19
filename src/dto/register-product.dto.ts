@@ -16,4 +16,7 @@ export class RegisterProductDto{
     @IsString()
     imageUrl:string;
 
+    @IsString()
+    categoryId:string;
+
 }
